@@ -107,7 +107,6 @@ void print(Palette fg, Palette bg, Font font, std::string text) {
     }
     std::cout << text;
     std::cout << "\033[m";
-    std::cout << std::endl;
 }
 
 };
