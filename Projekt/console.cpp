@@ -1,40 +1,32 @@
 #include <iostream>
 #include <string>
 
-namespace Console {
+#include "./color.h"
 
-enum Mode {
-    TEST,
-    DEV,
-    PROD
-};
+#define ERR_BAD_COMMAND 1
+#define EXIT_COMMAND 2
+
+namespace Console {
 
 struct Console {
     std::string curr_line;
-    Mode mode;
 };
 
-Console console_init_test() {
+Console console_init() {
     Console cons;
-    cons.mode = TEST;
     return cons;
 }
 
-Console console_init_dev() {
-    Console cons;
-    cons.mode = DEV;
-    return cons;
-}
-
-Console console_init_prod() {
-    Console cons;
-    cons.mode = PROD;
-    return cons;
-}
-
-void console_start_reading(Console& cons,void (*func)(Console& cons)) {
+void console_start_reading(Console& cons,int (*func)(Console& cons)) {
     while(std::getline(std::cin,cons.curr_line)) {
-        func(cons);
+        int result = func(cons);
+        if(result == ERR_BAD_COMMAND) {
+            const std::string err_msg = "ERR::BAD COMMAND";
+            Color::print(Color::RED, Color::NONE, Color::BOLD, err_msg);
+            std::cout << std::endl;
+        } else if(result == EXIT_COMMAND) {
+            break;
+        }
     }
 }
 
@@ -42,10 +34,4 @@ void console_start_reading(Console& cons,void (*func)(Console& cons)) {
 
 void my_tmp_func(Console::Console& cons) {
     std::cout << cons.curr_line << std::endl;
-}
-
-int main() {
-    Console::Console cons = Console::console_init_dev();
-    Console::console_start_reading(cons,&my_tmp_func);
-    return 0;
 }

@@ -27,9 +27,9 @@ void bubble_sort(std::vector<int>& vec, int (*replace)(int *a, int *b)) {
     for(int i = 0; i < vec.size()-1; i++) {
         for(int j = i+1; j < vec.size(); j++) {
             int replace_res = replace(&vec[i], &vec[j]);
-            if(!replace_res) {
+            /*if(!replace_res) {
                 break;
-            }
+            }*/
         }
     }
 }

@@ -2,6 +2,9 @@
 
 #include <string>
 
+#define ERR_BAD_COMMAND 1
+#define EXIT_COMMAND 2
+
 namespace Console {
 
 enum Mode {
@@ -12,15 +15,10 @@ enum Mode {
 
 struct Console {
     std::string curr_line;
-    Mode mode;
 };
 
-Console console_init_test();
+Console console_init();
 
-Console console_init_dev();
-
-Console console_init_prod();
-
-void console_start_reading(Console& cons,void (*func)(Console& cons));
+void console_start_reading(Console& cons,int (*func)(Console& cons));
 
 };
