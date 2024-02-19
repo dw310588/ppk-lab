@@ -18,20 +18,20 @@ struct Node {
 };
 
 Node *root;
-Node *TNULL;
+Node *dummy_node;
 
 void tree_init() {
-    TNULL = new Node;
-    TNULL->color = BLACK;
-    TNULL->left = nullptr;
-    TNULL->right = nullptr;
-    root = TNULL;
+    dummy_node= new Node;
+    dummy_node->color = BLACK;
+    dummy_node->left = nullptr;
+    dummy_node->right = nullptr;
+    root = dummy_node;
 }
 
 void tree_left_rotate(Node *x) {
     Node *y = x->right;
     x->right = y->left;
-    if (y->left != TNULL) {
+    if (y->left != dummy_node) {
       y->left->parent = x;
     }
     y->parent = x->parent;
@@ -49,7 +49,7 @@ void tree_left_rotate(Node *x) {
 void tree_right_rotate(Node *x) {
     Node *y = x->left;
     x->left = y->right;
-    if (y->right != TNULL) {
+    if (y->right != dummy_node) {
       y->right->parent = x;
     }
     y->parent = x->parent;
@@ -64,15 +64,7 @@ void tree_right_rotate(Node *x) {
     x->parent = y;
 }
 
-void tree_init_null_node(Node *node, Node *parent) {
-    node->val= 0;
-    node->parent = parent;
-    node->left = nullptr;
-    node->right = nullptr;
-    node->color = BLACK;
-}
-
-void tree_insert_fix(Node *k) {
+void tree_organize_after_insert(Node *k) {
     Node *u;
     while (k->parent != nullptr && k->parent->color == RED) {
       if (k->parent == k->parent->parent->right) {
@@ -116,18 +108,7 @@ void tree_insert_fix(Node *k) {
     root->color = BLACK;
 }
 
-Node* tree_search_helper(Node *node, double key) {
-    if (node == TNULL || key == node->val) {
-      return node;
-    }
-
-    if (key < node->val) {
-      return tree_search_helper(node->left, key);
-    }
-    return tree_search_helper(node->right, key);
-}
-
-void tree_delete_fix(Node *x) {
+void tree_organize_after_delete(Node *x) {
     Node *s;
     while (x != root && x->color == BLACK) {
       if (x == x->parent->left) {
@@ -187,7 +168,7 @@ void tree_delete_fix(Node *x) {
     x->color = BLACK;
 }
 
-void tree_transplant(Node *u, Node *v) {
+void tree_move_node(Node *u, Node *v) {
     if (u->parent == nullptr) {
       root = v;
     } else if (u == u->parent->left) {
@@ -195,22 +176,23 @@ void tree_transplant(Node *u, Node *v) {
     } else {
       u->parent->right = v;
     }
-    if(v != TNULL) {
+    if(v != dummy_node) {
         v->parent = u->parent;
     }
 }
 
 Node* tree_minimum(Node *node) {
-    while (node->left != TNULL) {
+    while (node->left != dummy_node) {
       node = node->left;
     }
     return node;
 }
 
-void tree_delete_node_helper(Node *node, double key) {
-    Node *z = TNULL;
+void tree_delete_node(double key) {
+    Node *node = root;
+    Node *z = dummy_node;
     Node *x, *y;
-    while (node != TNULL) {
+    while (node != dummy_node) {
       if (node->val == key) {
         z = node;
       }
@@ -222,19 +204,19 @@ void tree_delete_node_helper(Node *node, double key) {
       }
     }
 
-    if (z == TNULL) {
+    if (z == dummy_node) {
       cout << "Key not found in the tree" << endl;
       return;
     }
 
     y = z;
     int y_original_color = y->color;
-    if (z->left == TNULL) {
+    if (z->left == dummy_node) {
       x = z->right;
-      tree_transplant(z, z->right);
-    } else if (z->right == TNULL) {
+      tree_move_node(z, z->right);
+    } else if (z->right == dummy_node) {
       x = z->left;
-      tree_transplant(z, z->left);
+      tree_move_node(z, z->left);
     } else {
       y = tree_minimum(z->right);
       y_original_color = y->color;
@@ -242,57 +224,32 @@ void tree_delete_node_helper(Node *node, double key) {
       if (y->parent == z) {
         x->parent = y;
       } else {
-        tree_transplant(y, y->right);
+        tree_move_node(y, y->right);
         y->right = z->right;
         y->right->parent = y;
       }
 
-      tree_transplant(z, y);
+      tree_move_node(z, y);
       y->left = z->left;
       y->left->parent = y;
       y->color = z->color;
     }
     if (y_original_color == BLACK) {
-      tree_delete_fix(x);
+      tree_organize_after_delete(x);
     }
     delete z;
 }
 
-Node* tree_search(double k) {
-    return tree_search_helper(root, k);
-}
-
 Node* tree_successor(Node *x) {
-    if (x->right != TNULL) {
+    if (x->right != dummy_node) {
       return tree_minimum(x->right);
     }
 
     Node *y = x->parent;
-    while (y != TNULL && x == y->right) {
+    while (y != dummy_node && x == y->right) {
       x = y;
       y = y->parent;
     }
-    return y;
-}
-
-Node* tree_maximum(Node *node) {
-    while (node->right != TNULL) {
-      node = node->right;
-    }
-    return node;
-}
-
-Node* tree_predecessor(Node *x) {
-    if (x->left != TNULL) {
-      return tree_maximum(x->left);
-    }
-
-    Node *y = x->parent;
-    while (y != TNULL && x == y->left) {
-      x = y;
-      y = y->parent;
-    }
-
     return y;
 }
 
@@ -300,14 +257,14 @@ void tree_insert(double key) {
     Node *node = new Node;
     node->parent = nullptr;
     node->val = key;
-    node->left = TNULL;
-    node->right = TNULL;
+    node->left = dummy_node;
+    node->right = dummy_node;
     node->color = RED;
 
     Node *y = nullptr;
     Node *x = root;
 
-    while (x != nullptr && x != TNULL) {
+    while (x != nullptr && x != dummy_node) {
       y = x;
       if (node->val < x->val) {
         x = x->left;
@@ -334,40 +291,34 @@ void tree_insert(double key) {
       return;
     }
 
-    tree_insert_fix(node);
+    tree_organize_after_insert(node);
 }
 
-Node* tree_get_root() {
-    return root;
-}
-
-void tree_delete_node(double data) {
-    tree_delete_node_helper(root, data);
-}
-
-void tree_print() {
-  std::vector<Node*> stack = {root};
-  while(!stack.empty()) {
-      int size = stack.size();
-      int i;
-      for(i = 0; i < size; i++) {
-          if(stack[i]->color == BLACK) {
-              printf("[%f] ",stack[i]->val);
-          } else if(stack[i]->color == RED) {
-              printf("(%f) ",stack[i]->val);
-          }
-          if(stack[i]->left) {
-              stack.push_back(stack[i]->left);
-          }
-          if(stack[i]->right) {
-              stack.push_back(stack[i]->right);
-          }
-      }
-      printf("\n");
-      for(int j = 0; j < i; j++) {
-          stack.erase(stack.begin());
-      }
-  }
+std::vector<std::vector<std::pair<double,Color>>> tree_get_levels() {
+    std::vector<std::vector<std::pair<double,Color>>> res;
+    std::vector<Node*> stack = {root};
+    while(!stack.empty()) {
+        int size = stack.size();
+        int i;
+        std::vector<std::pair<double,Color>> level;
+        for(i = 0; i < size; i++) {
+            std::pair<double,Color> element;
+            element.first = stack[i]->val;
+            element.second = stack[i]->color;
+            level.push_back(element);
+            if(stack[i]->left) {
+                stack.push_back(stack[i]->left);
+            }
+            if(stack[i]->right) {
+                stack.push_back(stack[i]->right);
+            }
+        }
+        for(int j = 0; j < i; j++) {
+            stack.erase(stack.begin());
+        }
+        res.push_back(level);
+    }
+    return res;
 }
 
 void tree_get_nodes_helper(std::vector<double>& output, Node *n) {

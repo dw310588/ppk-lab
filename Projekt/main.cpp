@@ -93,8 +93,50 @@ void print_sorted(std::vector<std::string>& words) {
     }
 }
 
-void graph() {
-    tree_print();
+void graph(std::vector<std::string>& words) {
+    std::vector<std::vector<std::pair<double,Color>>> levels = tree_get_levels();
+    if(words.size() < 2) {
+        for(int i = 0; i < levels.size(); i++) {
+            for(int j = 0; j < levels[i].size(); j++) {
+                std::pair<double,Color> current = levels[i][j];
+                if(current.second == BLACK) {
+                    std::cout << "[" << current.first << "] ";
+                } else if(current.second == RED) {
+                    std::cout << "(" << current.first << ") ";
+                }
+            }
+            std::cout << std::endl;
+        }
+    } else if(words[1][0] == '+') {
+        std::string filename = words[1];
+        filename.erase(filename.begin());
+        std::ofstream file(filename,std::ios_base::app);
+        for(int i = 0; i < levels.size(); i++) {
+            for(int j = 0; j < levels[i].size(); j++) {
+                std::pair<double,Color> current = levels[i][j];
+                if(current.second == BLACK) {
+                    file << "[" << current.first << "] ";
+                } else if(current.second == RED) {
+                    file << "(" << current.first << ") ";
+                }
+            }
+            file << std::endl;
+        }
+    } else {
+        std::string filename = words[1];
+        std::ofstream file(filename);
+        for(int i = 0; i < levels.size(); i++) {
+            for(int j = 0; j < levels[i].size(); j++) {
+                std::pair<double,Color> current = levels[i][j];
+                if(current.second == BLACK) {
+                    file << "[" << current.first << "] ";
+                } else if(current.second == RED) {
+                    file << "(" << current.first << ") ";
+                }
+            }
+            file << std::endl;
+        }
+    }
 }
 
 int loop(Console::Console& cons) {
@@ -111,7 +153,7 @@ int loop(Console::Console& cons) {
             print_sorted(words);
             break;
         case GRAPH:
-            graph();
+            graph(words);
             break;
         case EXIT:
             return EXIT_COMMAND;
