@@ -52,20 +52,20 @@ Command get_command(std::vector<std::string>& word) {
 
 void add_nums(std::vector<std::string>& words) {
     for(int i = 1; i < words.size(); i++) {
-        int current = std::stoi(words[i]);
+        double current = std::stod(words[i]);
         tree_insert(current);
     }
 }
 
 void remove_nums(std::vector<std::string>& words) {
     for(int i = 1; i < words.size(); i++) {
-        int curr = std::stoi(words[i]);
+        double curr = std::stod(words[i]);
         tree_delete_node(curr);
     }
 }
 
 void print_sorted(std::vector<std::string>& words) {
-    std::vector<int> nodes = tree_get_nodes();
+    std::vector<double> nodes = tree_get_nodes();
     if(words.size() < 2) {
         std::cout << "{ ";
         for(int i = 0; i < nodes.size()-1; i++) {

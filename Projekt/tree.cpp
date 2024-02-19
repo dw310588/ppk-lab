@@ -10,7 +10,7 @@ enum Color {
 };
 
 struct Node {
-  int val;
+  double val;
   Node *parent;
   Node *left;
   Node *right;
@@ -74,10 +74,10 @@ void tree_init_null_node(Node *node, Node *parent) {
 
 void tree_insert_fix(Node *k) {
     Node *u;
-    while (k->parent->color == RED) {
+    while (k->parent != nullptr && k->parent->color == RED) {
       if (k->parent == k->parent->parent->right) {
         u = k->parent->parent->left;
-        if (u->color == RED) {
+        if (u != nullptr && u->color == RED) {
           u->color = BLACK;
           k->parent->color = BLACK;
           k->parent->parent->color = RED;
@@ -94,7 +94,7 @@ void tree_insert_fix(Node *k) {
       } else {
         u = k->parent->parent->right;
 
-        if (u->color == RED) {
+        if (u != nullptr && u->color == RED) {
           u->color = BLACK;
           k->parent->color = BLACK;
           k->parent->parent->color = RED;
@@ -116,7 +116,7 @@ void tree_insert_fix(Node *k) {
     root->color = BLACK;
 }
 
-Node* tree_search_helper(Node *node, int key) {
+Node* tree_search_helper(Node *node, double key) {
     if (node == TNULL || key == node->val) {
       return node;
     }
@@ -195,7 +195,9 @@ void tree_transplant(Node *u, Node *v) {
     } else {
       u->parent->right = v;
     }
-    v->parent = u->parent;
+    if(v != TNULL) {
+        v->parent = u->parent;
+    }
 }
 
 Node* tree_minimum(Node *node) {
@@ -205,7 +207,7 @@ Node* tree_minimum(Node *node) {
     return node;
 }
 
-void tree_delete_node_helper(Node *node, int key) {
+void tree_delete_node_helper(Node *node, double key) {
     Node *z = TNULL;
     Node *x, *y;
     while (node != TNULL) {
@@ -250,13 +252,13 @@ void tree_delete_node_helper(Node *node, int key) {
       y->left->parent = y;
       y->color = z->color;
     }
-    delete z;
     if (y_original_color == BLACK) {
       tree_delete_fix(x);
     }
+    delete z;
 }
 
-Node* tree_search(int k) {
+Node* tree_search(double k) {
     return tree_search_helper(root, k);
 }
 
@@ -294,7 +296,7 @@ Node* tree_predecessor(Node *x) {
     return y;
 }
 
-void tree_insert(int key) {
+void tree_insert(double key) {
     Node *node = new Node;
     node->parent = nullptr;
     node->val = key;
@@ -305,7 +307,7 @@ void tree_insert(int key) {
     Node *y = nullptr;
     Node *x = root;
 
-    while (x != TNULL) {
+    while (x != nullptr && x != TNULL) {
       y = x;
       if (node->val < x->val) {
         x = x->left;
@@ -339,7 +341,7 @@ Node* tree_get_root() {
     return root;
 }
 
-void tree_delete_node(int data) {
+void tree_delete_node(double data) {
     tree_delete_node_helper(root, data);
 }
 
@@ -350,9 +352,9 @@ void tree_print() {
       int i;
       for(i = 0; i < size; i++) {
           if(stack[i]->color == BLACK) {
-              printf("[%d] ",stack[i]->val);
+              printf("[%f] ",stack[i]->val);
           } else if(stack[i]->color == RED) {
-              printf("(%d) ",stack[i]->val);
+              printf("(%f) ",stack[i]->val);
           }
           if(stack[i]->left) {
               stack.push_back(stack[i]->left);
@@ -368,15 +370,15 @@ void tree_print() {
   }
 }
 
-void tree_get_nodes_helper(std::vector<int>& output, Node *n) {
+void tree_get_nodes_helper(std::vector<double>& output, Node *n) {
     if(!n) return;
     tree_get_nodes_helper(output,n->left);
     output.push_back(n->val);
     tree_get_nodes_helper(output,n->right);
 }
 
-std::vector<int> tree_get_nodes() {
-    std::vector<int> vec;
+std::vector<double> tree_get_nodes() {
+    std::vector<double> vec;
     tree_get_nodes_helper(vec,root);
     return vec;
 }

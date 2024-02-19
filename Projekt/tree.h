@@ -25,7 +25,7 @@ void tree_init_null_node(Node *node, Node *parent);
 
 void tree_insert_fix(Node *k);
 
-Node* tree_search_helper(Node *node, int key);
+Node* tree_search_helper(Node *node, double key);
 
 void tree_delete_fix(Node *x);
 
@@ -33,9 +33,9 @@ void tree_transplant(Node *u, Node *v);
 
 Node* tree_minimum(Node *node);
 
-void tree_delete_node_helper(Node *node, int key);
+void tree_delete_node_helper(Node *node, double key);
 
-Node* tree_search(int k);
+Node* tree_search(double k);
 
 Node* tree_successor(Node *x);
 
@@ -43,12 +43,12 @@ Node* tree_maximum(Node *node);
 
 Node* tree_predecessor(Node *x);
 
-void tree_insert(int key);
+void tree_insert(double key);
 
 Node* tree_get_root();
 
-void tree_delete_node(int data);
+void tree_delete_node(double data);
 
 void tree_print();
 
-std::vector<int> tree_get_nodes();
+std::vector<double> tree_get_nodes();
